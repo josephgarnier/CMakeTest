@@ -58,10 +58,35 @@ function(message)
         cpp_set_global(CT_LAST_MESSAGE "${ARGV}")
     endif()
 
-    if("${ARGV}" STREQUAL "")
-        _message("")
+    if (${ARGC} EQUAL 0)
+         _message("")
+    elseif (${ARGC} EQUAL 1)
+        _message("${ARGV0}")
     else()
-        _message(${ARGV})
+        set(valid_message_modes
+            "FATAL_ERROR"
+            "SEND_ERROR"
+            "WARNING"
+            "AUTHOR_WARNING"
+            "DEPRECATION"
+            "NOTICE"
+            "STATUS"
+            "VERBOSE"
+            "DEBUG"
+            "TRACE"
+            "CHECK_START"
+            "CHECK_PASS"
+            "CHECK_FAIL"
+        )
+        set(first_arg "${ARGV0}")
+        if ("${first_arg}" IN_LIST valid_message_modes)
+            list(REMOVE_AT ARGV 0)
+            string(JOIN "" msg ${ARGV})
+            _message("${first_arg}" "${msg}")
+        else()
+            string(JOIN "" msg ${ARGV})
+            _message("${msg}")
+        endif()
     endif()
 
     set(CMAKEPP_LANG_DEBUG_MODE "${_m_temp_debug_mode}")
